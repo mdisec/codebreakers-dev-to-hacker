@@ -8,6 +8,7 @@
 //
 const express = require('express');
 const bodyParser = require('body-parser');
+const axios = require('axios');
 const _ = require('lodash');
 const app = express();
 
@@ -23,6 +24,27 @@ const users = [
 
 let messages = [];
 let lastId = 1;
+
+// Remote logging with axios.
+const config = {
+    headers: { Authorization: `Bearer MyTopSecRetAUTHKeyHere` }
+};
+const logger = axios.create({
+    baseURL: 'http://localhost:8000/',
+});
+
+// create a logger function that send POST request to /log endpoint.
+// try catch block is used to prevent the logging from crashing the app.
+const log = async (data) => {
+    try {
+        await logger.post('/log', data, config);
+    } catch (error) {
+        console.error('Error occurred while logging: ' + error);
+    }
+
+}
+
+
 
 function findUser(auth) {
     return users.find((u) =>
@@ -60,6 +82,7 @@ app.put('/', (req, res) => {
 
     messages.push(message);
     res.send({ok: true});
+    log({message: `New message from ${user.name}`});
 });
 
 // Delete message by ID (restricted for users with flag "canDelete" only).
