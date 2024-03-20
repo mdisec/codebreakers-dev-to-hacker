@@ -1,0 +1,17 @@
+{
+  "name": "vulnerable-chat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "1.18.3",
+    "express": "4.16.4",
+    "axios": "1.6.3",
+    "lodash": "4.17.4"
+  }
+}
