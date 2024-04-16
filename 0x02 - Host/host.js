@@ -1,3 +1,8 @@
+/**
+* Vulnerability found by @Osb0rn3
+* https://github.com/axios/axios/issues/6295
+*/
+
 const express = require('express');
 const axios = require('axios');
 
