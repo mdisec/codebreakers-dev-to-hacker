@@ -5,7 +5,7 @@ import { cookies } from 'next/headers'
 export async function GET(req: Request) {
   try {
     // Get session ID from cookies
-    const sessionId = cookies().get('sessionId')?.value
+    const sessionId = (await cookies()).get('sessionId')?.value
 
     if (!sessionId) {
       return NextResponse.json(
@@ -39,7 +39,7 @@ export async function GET(req: Request) {
       }
       
       // Clear the cookie
-      cookies().delete('sessionId')
+      (await cookies()).delete('sessionId')
       
       return NextResponse.json(
         { error: 'Session expired' },

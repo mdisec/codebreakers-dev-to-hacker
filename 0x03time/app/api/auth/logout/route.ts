@@ -4,7 +4,8 @@ import { cookies } from 'next/headers'
 
 export async function POST() {
   try {
-    const sessionId = cookies().get('sessionId')?.value
+    const cookieStore = await cookies()
+    const sessionId = cookieStore.get('sessionId')?.value
 
     if (sessionId) {
       // Delete the session from the database
@@ -13,7 +14,7 @@ export async function POST() {
       })
 
       // Clear the session cookie
-      cookies().delete('sessionId')
+      cookieStore.delete('sessionId')
     }
 
     return NextResponse.json({ success: true })

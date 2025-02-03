@@ -9,6 +9,7 @@ const SESSION_EXPIRY_HOURS = 24
 export async function POST(req: Request) {
   try {
     const { email, password } = await req.json()
+    const cookieStore = await cookies()
 
     if (!email || !password) {
       return NextResponse.json(
@@ -55,7 +56,7 @@ export async function POST(req: Request) {
     })
 
     // Set session cookie
-    cookies().set('sessionId', session.id, {
+    cookieStore.set('sessionId', session.id, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
