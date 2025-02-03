@@ -58,7 +58,7 @@ export async function POST(req: Request) {
     // Set session cookie
     cookieStore.set('sessionId', session.id, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false, // spend 2 hours this ffs! mdifuck! process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       expires: new Date(Date.now() + SESSION_EXPIRY_HOURS * 60 * 60 * 1000)
     })
