@@ -54,6 +54,29 @@ export async function POST(req: Request) {
       )
     }
 
+    // Perform the transfer in a transaction
+    const transfer = await prisma.$transaction(async (tx) => {
+      // Deduct from sender
+      const updatedSender = await tx.user.update({
+        where: { id: user.id },
+        data: { credits: { decrement: amount } }
+      })
+
+      // Add to recipient
+      const updatedRecipient = await tx.user.update({
+        where: { id: recipient.id },
+        data: { credits: { increment: amount } }
+      })
+
+      return { updatedSender, updatedRecipient }
+    })
+
+    return NextResponse.json({
+      success: true,
+      newBalance: transfer.updatedSender.credits
+    })
+
+    /*
     // Deduct from sender
     const updatedSender = await prisma.user.update({
       where: { id: user.id },
@@ -70,6 +93,7 @@ export async function POST(req: Request) {
       success: true,
       newBalance: updatedSender.credits
     })
+    */
 
   } catch (error) {
     console.error('Transfer error:', error)
