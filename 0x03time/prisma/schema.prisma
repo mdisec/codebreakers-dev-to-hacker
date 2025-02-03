@@ -12,6 +12,16 @@ model User {
   email     String   @unique
   password  String
   name      String?
+  credits   Int      @default(100)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  sessions  Session[]
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 } 

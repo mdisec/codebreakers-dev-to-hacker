@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
+import { cookies } from 'next/headers'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
+// Session will expire in 24 hours
+const SESSION_EXPIRY_HOURS = 24
 
 export async function POST(req: Request) {
   try {
@@ -18,7 +19,14 @@ export async function POST(req: Request) {
 
     // Find user
     const user = await prisma.user.findUnique({
-      where: { email }
+      where: { email },
+      select: {
+        id: true,
+        email: true,
+        password: true,
+        name: true,
+        credits: true
+      }
     })
 
     if (!user) {
@@ -38,19 +46,27 @@ export async function POST(req: Request) {
       )
     }
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { userId: user.id, email: user.email },
-      JWT_SECRET,
-      { expiresIn: '24h' }
-    )
+    // Create a new session
+    const session = await prisma.session.create({
+      data: {
+        userId: user.id,
+        expiresAt: new Date(Date.now() + SESSION_EXPIRY_HOURS * 60 * 60 * 1000)
+      }
+    })
+
+    // Set session cookie
+    cookies().set('sessionId', session.id, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      expires: new Date(Date.now() + SESSION_EXPIRY_HOURS * 60 * 60 * 1000)
+    })
 
     // Remove password from response
     const { password: _, ...userWithoutPassword } = user
 
     return NextResponse.json({
-      user: userWithoutPassword,
-      token
+      user: userWithoutPassword
     })
   } catch (error) {
     console.error('Login error:', error)
