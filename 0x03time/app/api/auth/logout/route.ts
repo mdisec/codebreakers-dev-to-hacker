@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { cookies } from 'next/headers'
+import { getSessionUser } from '@/lib/auth'
+import { cleanupSession } from '@/lib/auth'
 
 export async function POST() {
   try {
@@ -8,13 +10,7 @@ export async function POST() {
     const sessionId = cookieStore.get('sessionId')?.value
 
     if (sessionId) {
-      // Delete the session from the database
-      await prisma.session.delete({
-        where: { id: sessionId }
-      })
-
-      // Clear the session cookie
-      cookieStore.delete('sessionId')
+      await cleanupSession(sessionId)
     }
 
     return NextResponse.json({ success: true })

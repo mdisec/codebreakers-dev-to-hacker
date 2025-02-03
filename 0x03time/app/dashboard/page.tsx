@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import CreditTransfer from '../components/CreditTransfer'
 
 interface UserProfile {
   name: string | null
@@ -9,11 +10,24 @@ interface UserProfile {
   credits: number
 }
 
+
 export default function DashboardPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [profile, setProfile] = useState<UserProfile | null>(null)
+
+  const refreshProfile = async () => {
+    try {
+      const res = await fetch('/api/user/profile')
+      if (res.ok) {
+        const data = await res.json()
+        setProfile(data)
+      }
+    } catch (err) {
+      console.error('Profile refresh error:', err)
+    }
+  }
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -92,8 +106,11 @@ export default function DashboardPage() {
               <span className="text-blue-600 ml-1">credits</span>
             </div>
           </div>
-        </div>
+        </div>   
+        <CreditTransfer onTransferComplete={refreshProfile} />
       </div>
     </div>
+
+
   )
 } 

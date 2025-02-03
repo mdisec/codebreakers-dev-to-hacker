@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 import { cookies } from 'next/headers'
+import { getSessionUser } from '@/lib/auth'
 
 export async function GET(req: Request) {
   try {
-    // Get session ID from cookies
     const sessionId = (await cookies()).get('sessionId')?.value
-
     if (!sessionId) {
       return NextResponse.json(
         { error: 'Not authenticated' },
@@ -14,40 +12,15 @@ export async function GET(req: Request) {
       )
     }
 
-    // Find valid session
-    const session = await prisma.session.findUnique({
-      where: { id: sessionId },
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            credits: true
-          }
-        }
-      }
-    })
-
-    // Check if session exists and hasn't expired
-    if (!session || session.expiresAt < new Date()) {
-      // Delete expired session if it exists
-      if (session) {
-        await prisma.session.delete({
-          where: { id: sessionId }
-        })
-      }
-      
-      // Clear the cookie
-      (await cookies()).delete('sessionId')
-      
+    const user = await getSessionUser(sessionId)
+    if (!user) {
       return NextResponse.json(
         { error: 'Session expired' },
         { status: 401 }
       )
     }
 
-    return NextResponse.json(session.user)
+    return NextResponse.json(user)
   } catch (error) {
     console.error('Profile fetch error:', error)
     return NextResponse.json(
