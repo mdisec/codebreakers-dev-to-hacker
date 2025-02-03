@@ -1,0 +1,33 @@
+{
+  "name": "0x03time",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "15.1.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@prisma/client": "^6.3.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.8",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "bcryptjs": "^2.4.3",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.6",
+    "jsonwebtoken": "^9.0.2",
+    "postcss": "^8",
+    "prisma": "^6.3.0",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
