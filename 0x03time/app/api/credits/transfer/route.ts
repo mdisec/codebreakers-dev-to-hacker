@@ -76,25 +76,6 @@ export async function POST(req: Request) {
       newBalance: transfer.updatedSender.credits
     })
 
-    /*
-    // Deduct from sender
-    const updatedSender = await prisma.user.update({
-      where: { id: user.id },
-      data: { credits: { decrement: amount } }
-    })
-
-    // Add to recipient
-    const updatedRecipient = await prisma.user.update({
-      where: { id: recipient.id },
-      data: { credits: { increment: amount } }
-    })
-
-    return NextResponse.json({
-      success: true,
-      newBalance: updatedSender.credits
-    })
-    */
-
   } catch (error) {
     console.error('Transfer error:', error)
     return NextResponse.json(
